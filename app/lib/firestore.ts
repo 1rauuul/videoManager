@@ -1,4 +1,7 @@
+import { createHash } from "crypto";
 import { Firestore, Timestamp } from "@google-cloud/firestore";
+
+const md5 = (str: string) => createHash("md5").update(str).digest("hex");
 
 const firestore = new Firestore({
   projectId: process.env.GCS_PROJECT_ID,
@@ -10,6 +13,7 @@ const firestore = new Firestore({
 
 const usersCollection = firestore.collection("users");
 const videoUploadedCollection = firestore.collection("videoUploaded");
+const invitationCodeCollection = firestore.collection("InvitationCode");
 
 // =========================
 // Users
@@ -21,6 +25,7 @@ export interface User {
   password: string;
   nombre: string;
   email: string;
+  invitationCode: string;
 }
 
 export async function getUserByUserName(userName: string): Promise<User | null> {
@@ -41,7 +46,16 @@ export async function getUserByUserName(userName: string): Promise<User | null> 
     password: data.Password ?? "",
     nombre: data.Nombre ?? "",
     email: data.Email ?? "",
+    invitationCode: data.InvitationCode ?? "",
   };
+}
+
+export async function isValidInvitationCode(code: string): Promise<boolean> {
+  const snapshot = await invitationCodeCollection
+    .where("id", "==", code.trim())
+    .limit(1)
+    .get();
+  return !snapshot.empty;
 }
 
 export async function createUser(userData: {
@@ -49,6 +63,7 @@ export async function createUser(userData: {
   password: string;
   nombre: string;
   email: string;
+  invitationCode: string;
 }): Promise<User> {
   const existing = await getUserByUserName(userData.userName);
   if (existing) {
@@ -57,17 +72,19 @@ export async function createUser(userData: {
 
   const docRef = await usersCollection.add({
     UserName: userData.userName,
-    Password: userData.password,
+    Password: md5(userData.password),
     Nombre: userData.nombre,
     Email: userData.email,
+    InvitationCode: userData.invitationCode,
   });
 
   return {
     id: docRef.id,
     userName: userData.userName,
-    password: userData.password,
+    password: md5(userData.password),
     nombre: userData.nombre,
     email: userData.email,
+    invitationCode: userData.invitationCode,
   };
 }
 
@@ -76,7 +93,7 @@ export async function loginUser(
   password: string
 ): Promise<User | null> {
   const user = await getUserByUserName(userName);
-  if (!user || user.password !== password) {
+  if (!user || md5(password) !== user.password) {
     return null;
   }
   return user;

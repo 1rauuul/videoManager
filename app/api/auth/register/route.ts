@@ -1,19 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createUser } from "@/app/lib/firestore";
+import { createUser, isValidInvitationCode } from "@/app/lib/firestore";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userName, password, nombre, email } = body;
+    const { userName, password, nombre, email, invitationCode } = body;
 
-    if (!userName || !password || !nombre || !email) {
+    if (!userName || !password || !nombre || !email || !invitationCode) {
       return NextResponse.json(
         { error: "Todos los campos son requeridos" },
         { status: 400 }
       );
     }
 
-    const user = await createUser({ userName, password, nombre, email });
+    const validCode = await isValidInvitationCode(invitationCode);
+    if (!validCode) {
+      return NextResponse.json(
+        { error: "Codigo de invitacion invalido" },
+        { status: 403 }
+      );
+    }
+
+    const user = await createUser({ userName, password, nombre, email, invitationCode });
 
     return NextResponse.json(
       {

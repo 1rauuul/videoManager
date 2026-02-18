@@ -27,6 +27,7 @@ export default function AuthTabs({ onAuthSuccess }: AuthTabsProps) {
   const [regPassword, setRegPassword] = useState("");
   const [regNombre, setRegNombre] = useState("");
   const [regEmail, setRegEmail] = useState("");
+  const [regInvitationCode, setRegInvitationCode] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +72,7 @@ export default function AuthTabs({ onAuthSuccess }: AuthTabsProps) {
           password: regPassword,
           nombre: regNombre,
           email: regEmail,
+          invitationCode: regInvitationCode,
         }),
       });
 
@@ -165,6 +167,20 @@ export default function AuthTabs({ onAuthSuccess }: AuthTabsProps) {
       {/* Register Form */}
       {activeTab === "register" && (
         <form onSubmit={handleRegister} className="mt-6 space-y-4">
+          <div>
+            <label htmlFor="reg-invitation-code" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+              Codigo de invitacion
+            </label>
+            <input
+              id="reg-invitation-code"
+              type="text"
+              required
+              value={regInvitationCode}
+              onChange={(e) => setRegInvitationCode(e.target.value)}
+              placeholder="Pega el codigo que te proporcionaron"
+              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-600"
+            />
+          </div>
           <div>
             <label htmlFor="reg-nombre" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
               Nombre completo
