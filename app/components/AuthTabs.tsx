@@ -142,7 +142,7 @@ export default function AuthTabs({ onAuthSuccess }: AuthTabsProps) {
           </div>
           <div>
             <label htmlFor="login-password" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
-              Contrasena
+              Contraseña
             </label>
             <input
               id="login-password"
@@ -169,7 +169,7 @@ export default function AuthTabs({ onAuthSuccess }: AuthTabsProps) {
         <form onSubmit={handleRegister} className="mt-6 space-y-4">
           <div>
             <label htmlFor="reg-invitation-code" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
-              Codigo de invitacion
+              Código de invitación
             </label>
             <input
               id="reg-invitation-code"
@@ -225,7 +225,7 @@ export default function AuthTabs({ onAuthSuccess }: AuthTabsProps) {
           </div>
           <div>
             <label htmlFor="reg-password" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
-              Contrasena
+              Contraseña
             </label>
             <input
               id="reg-password"
