@@ -1,19 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 
-interface AuthUser {
-  id: string;
-  userName: string;
-  nombre: string;
-  email: string;
-}
-
-interface AuthTabsProps {
-  onAuthSuccess: (user: AuthUser) => void;
-}
-
-export default function AuthTabs({ onAuthSuccess }: AuthTabsProps) {
+export default function AuthTabs() {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -35,24 +25,17 @@ export default function AuthTabs({ onAuthSuccess }: AuthTabsProps) {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userName: loginUsername,
-          password: loginPassword,
-        }),
+      const result = await signIn("credentials", {
+        userName: loginUsername,
+        password: loginPassword,
+        redirect: false,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Error al iniciar sesion");
+      if (result?.error) {
+        setError("Usuario o contraseña incorrectos");
       }
-
-      onAuthSuccess(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error desconocido");
+    } catch {
+      setError("Error al iniciar sesion");
     } finally {
       setLoading(false);
     }
@@ -82,7 +65,16 @@ export default function AuthTabs({ onAuthSuccess }: AuthTabsProps) {
         throw new Error(data.error || "Error al registrarse");
       }
 
-      onAuthSuccess(data);
+      // Auto-login tras registro exitoso
+      const result = await signIn("credentials", {
+        userName: regUsername,
+        password: regPassword,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError("Registro exitoso, pero no se pudo iniciar sesion automaticamente. Inicia sesion manualmente.");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido");
     } finally {
@@ -150,7 +142,7 @@ export default function AuthTabs({ onAuthSuccess }: AuthTabsProps) {
               required
               value={loginPassword}
               onChange={(e) => setLoginPassword(e.target.value)}
-              placeholder="Tu contrasena"
+              placeholder="Tu contraseña"
               className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-600"
             />
           </div>
@@ -233,7 +225,7 @@ export default function AuthTabs({ onAuthSuccess }: AuthTabsProps) {
               required
               value={regPassword}
               onChange={(e) => setRegPassword(e.target.value)}
-              placeholder="Elige una contrasena"
+              placeholder="Elige una contraseña"
               className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-600"
             />
           </div>

@@ -1,49 +1,28 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
+import { useSession, signOut } from "next-auth/react";
 import AuthTabs from "./components/AuthTabs";
 import VideoUploader from "./components/VideoUploader";
 import UserVideosList from "./components/UserVideosList";
 
-interface AuthUser {
-  id: string;
-  userName: string;
-  nombre: string;
-  email: string;
-}
-
 export default function Home() {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const { data: session, status } = useSession();
   const [videosRefreshKey, setVideosRefreshKey] = useState(0);
-
-  // Recuperar sesion de localStorage al cargar
-  useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) {
-      try {
-        setUser(JSON.parse(stored));
-      } catch {
-        localStorage.removeItem("user");
-      }
-    }
-  }, []);
-
-  const handleAuthSuccess = (authUser: AuthUser) => {
-    setUser(authUser);
-    localStorage.setItem("user", JSON.stringify(authUser));
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
-  };
 
   const handleUploadComplete = useCallback(() => {
     setVideosRefreshKey((k) => k + 1);
   }, []);
 
-  // No autenticado: mostrar login/registro
-  if (!user) {
+  if (status === "loading") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-300 border-t-blue-600" />
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 font-sans dark:bg-black">
         <main className="w-full max-w-md py-16">
@@ -55,13 +34,14 @@ export default function Home() {
               Inicia sesion o registrate para subir videos
             </p>
           </div>
-          <AuthTabs onAuthSuccess={handleAuthSuccess} />
+          <AuthTabs />
         </main>
       </div>
     );
   }
 
-  // Autenticado: mostrar uploader y lista de videos
+  const user = session!.user;
+
   return (
     <div className="min-h-screen bg-zinc-50 px-4 font-sans dark:bg-black">
       <main className="mx-auto max-w-2xl py-16">
@@ -76,7 +56,7 @@ export default function Home() {
             </p>
           </div>
           <button
-            onClick={handleLogout}
+            onClick={() => signOut()}
             className="rounded-lg border border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
             Cerrar sesion
