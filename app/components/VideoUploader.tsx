@@ -205,10 +205,10 @@ export default function VideoUploader({ userName, idUser, onUploadComplete }: Vi
               />
             </svg>
             <div className="text-center">
-              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <p className="text-lg font-medium text-zinc-700 dark:text-zinc-300">
                 Arrastra un video aqui o haz clic para seleccionar
               </p>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">
+              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-500">
                 MP4, WebM, OGG, MOV, AVI, MKV
               </p>
             </div>
@@ -292,10 +292,10 @@ export default function VideoUploader({ userName, idUser, onUploadComplete }: Vi
       {status === "uploading" && (
         <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <p className="text-lg font-medium text-zinc-700 dark:text-zinc-300">
               Subiendo video...
             </p>
-            <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+            <span className="text-lg font-semibold text-blue-600 dark:text-blue-400">
               {progress}%
             </span>
           </div>
@@ -306,7 +306,7 @@ export default function VideoUploader({ userName, idUser, onUploadComplete }: Vi
             />
           </div>
           {file && (
-            <p className="mt-2 text-xs text-zinc-500">
+            <p className="mt-2 text-sm text-zinc-500">
               {file.name} — {formatFileSize(file.size)}
             </p>
           )}
@@ -326,7 +326,7 @@ export default function VideoUploader({ userName, idUser, onUploadComplete }: Vi
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">Registrando video...</p>
+          <p className="text-lg text-zinc-600 dark:text-zinc-400">Registrando video...</p>
         </div>
       )}
 
@@ -346,12 +346,12 @@ export default function VideoUploader({ userName, idUser, onUploadComplete }: Vi
               d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
             />
           </svg>
-          <p className="mt-2 text-sm font-medium text-green-800 dark:text-green-300">
+          <p className="mt-2 text-lg font-medium text-green-800 dark:text-green-300">
             Video subido y registrado correctamente
           </p>
           <button
             onClick={resetState}
-            className="mt-4 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700"
+            className="mt-4 rounded-lg bg-green-600 px-4 py-2 text-lg font-medium text-white transition-colors hover:bg-green-700"
           >
             Subir otro video
           </button>
@@ -374,12 +374,12 @@ export default function VideoUploader({ userName, idUser, onUploadComplete }: Vi
               d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
             />
           </svg>
-          <p className="mt-2 text-sm font-medium text-red-800 dark:text-red-300">
+          <p className="mt-2 text-lg font-medium text-red-800 dark:text-red-300">
             {errorMessage}
           </p>
           <button
             onClick={resetState}
-            className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
+            className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-lg font-medium text-white transition-colors hover:bg-red-700"
           >
             Intentar de nuevo
           </button>
