@@ -28,10 +28,10 @@ export default function Home() {
         <main className="w-full max-w-md py-16">
           <div className="mb-8 text-center">
             <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
-              Video Manager
+              Administrador de videos
             </h1>
             <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-              Inicia sesion o registrate para subir videos
+              Inicia sesion o registrate para subir tus videos
             </p>
           </div>
           <AuthTabs />
@@ -49,7 +49,7 @@ export default function Home() {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
-              Video Manager
+              Administrador de videos
             </h1>
             <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
               Hola, {user.nombre}
@@ -59,15 +59,15 @@ export default function Home() {
             onClick={() => signOut()}
             className="rounded-lg border border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
-            Cerrar sesion
+            Cerrar sesión
           </button>
         </div>
 
         {/* Subir video */}
         <section className="mb-10">
-          <h2 className="mb-4 text-lg font-medium text-zinc-800 dark:text-zinc-200">
+          {/* <h2 className="mb-4 text-lg font-medium text-zinc-800 dark:text-zinc-200">
             Subir video
-          </h2>
+          </h2> */}
           <VideoUploader
             userName={user.userName}
             idUser={user.id}

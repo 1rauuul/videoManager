@@ -18,6 +18,17 @@ export default function AuthTabs() {
   const [regNombre, setRegNombre] = useState("");
   const [regEmail, setRegEmail] = useState("");
   const [regInvitationCode, setRegInvitationCode] = useState("");
+  const [regConfirmPassword, setRegConfirmPassword] = useState("");
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  const [confirmTouched, setConfirmTouched] = useState(false);
+
+  const passwordChecks = {
+    length: regPassword.length >= 8,
+    uppercase: /[A-Z]/.test(regPassword),
+    special: /[^a-zA-Z0-9]/.test(regPassword),
+  };
+  const isPasswordValid = Object.values(passwordChecks).every(Boolean);
+  const passwordsMatch = regPassword === regConfirmPassword;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +55,19 @@ export default function AuthTabs() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!isPasswordValid) {
+      setPasswordTouched(true);
+      setError("La contraseña no cumple con los requisitos de seguridad");
+      return;
+    }
+
+    if (!passwordsMatch) {
+      setConfirmTouched(true);
+      setError("Las contraseñas no coinciden");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -224,14 +248,64 @@ export default function AuthTabs() {
               type="password"
               required
               value={regPassword}
-              onChange={(e) => setRegPassword(e.target.value)}
+              onChange={(e) => { setRegPassword(e.target.value); setPasswordTouched(true); }}
+              onBlur={() => setPasswordTouched(true)}
               placeholder="Elige una contraseña"
-              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-600"
+              className={`w-full rounded-lg border px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 bg-white dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-600 ${
+                passwordTouched && !isPasswordValid
+                  ? "border-red-400 focus:border-red-500 focus:ring-red-500/20 dark:border-red-600"
+                  : passwordTouched && isPasswordValid
+                  ? "border-green-400 focus:border-green-500 focus:ring-green-500/20 dark:border-green-600"
+                  : "border-zinc-300 focus:border-blue-500 focus:ring-blue-500/20 dark:border-zinc-700"
+              }`}
             />
+            {passwordTouched && (
+              <ul className="mt-2 space-y-1">
+                <li className={`flex items-center gap-1.5 text-xs ${passwordChecks.length ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}>
+                  <span>{passwordChecks.length ? "✓" : "✗"}</span>
+                  Al menos 8 caracteres
+                </li>
+                <li className={`flex items-center gap-1.5 text-xs ${passwordChecks.uppercase ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}>
+                  <span>{passwordChecks.uppercase ? "✓" : "✗"}</span>
+                  Al menos una letra mayúscula
+                </li>
+                <li className={`flex items-center gap-1.5 text-xs ${passwordChecks.special ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}>
+                  <span>{passwordChecks.special ? "✓" : "✗"}</span>
+                  Al menos un carácter especial (!@#$%...)
+                </li>
+              </ul>
+            )}
+          </div>
+          <div>
+            <label htmlFor="reg-confirm-password" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+              Confirmar contraseña
+            </label>
+            <input
+              id="reg-confirm-password"
+              type="password"
+              required
+              value={regConfirmPassword}
+              onChange={(e) => { setRegConfirmPassword(e.target.value); setConfirmTouched(true); }}
+              onBlur={() => setConfirmTouched(true)}
+              placeholder="Repite tu contraseña"
+              className={`w-full rounded-lg border px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 bg-white dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-600 ${
+                confirmTouched && regConfirmPassword.length > 0 && !passwordsMatch
+                  ? "border-red-400 focus:border-red-500 focus:ring-red-500/20 dark:border-red-600"
+                  : confirmTouched && regConfirmPassword.length > 0 && passwordsMatch
+                  ? "border-green-400 focus:border-green-500 focus:ring-green-500/20 dark:border-green-600"
+                  : "border-zinc-300 focus:border-blue-500 focus:ring-blue-500/20 dark:border-zinc-700"
+              }`}
+            />
+            {confirmTouched && regConfirmPassword.length > 0 && !passwordsMatch && (
+              <p className="mt-1.5 text-xs text-red-500 dark:text-red-400">Las contraseñas no coinciden</p>
+            )}
+            {confirmTouched && regConfirmPassword.length > 0 && passwordsMatch && (
+              <p className="mt-1.5 text-xs text-green-600 dark:text-green-400">Las contraseñas coinciden</p>
+            )}
           </div>
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || (passwordTouched && !isPasswordValid) || (confirmTouched && !passwordsMatch)}
             className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed dark:focus:ring-offset-zinc-900"
           >
             {loading ? "Registrando..." : "Registrarse"}

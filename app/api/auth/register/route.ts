@@ -13,6 +13,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return NextResponse.json(
+        {
+          error:
+            "La contraseña debe tener al menos 8 caracteres, una letra mayúscula y un carácter especial",
+        },
+        { status: 400 }
+      );
+    }
+
     const validCode = await isValidInvitationCode(invitationCode);
     if (!validCode) {
       return NextResponse.json(
