@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import VideoThumbnail from "./VideoThumbnail";
 
 export interface VideoItem {
   id: string;
@@ -252,7 +251,11 @@ export default function UserVideosList({ idUser, refreshKey = 0 }: UserVideosLis
                   {/* Nombre del video */}
                   <td className="px-2 py-2.5">
                     <div className="flex items-center gap-2 min-w-0">
-                      <VideoThumbnail fileName={video.fileName} />
+                      <div className="shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40">
+                        <svg className="h-4 w-4 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9A2.25 2.25 0 0013.5 5.25h-9A2.25 2.25 0 002.25 7.5v9A2.25 2.25 0 004.5 18.75z" />
+                        </svg>
+                      </div>
                       <span className="truncate max-w-[180px] text-sm font-medium text-zinc-900 dark:text-zinc-100">
                         {video.nameVideo || shortFileName(video.fileName)}
                       </span>
